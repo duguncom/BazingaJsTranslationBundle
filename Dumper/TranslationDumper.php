@@ -179,6 +179,7 @@ class TranslationDumper
     {
         foreach ($this->getTranslations() as $locale => $domains) {
             foreach ($domains as $domain => $translations) {
+                $cleanedDomain = Util::cleanDomain($domain);
                 $renderContext = array(
                     'translations'   => array($locale => $this->filterTranslationsByDomain($domains, $cleanedDomain)),
                     'include_config' => false,
