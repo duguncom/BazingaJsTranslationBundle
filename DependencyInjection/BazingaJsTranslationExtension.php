@@ -2,8 +2,8 @@
 
 namespace Bazinga\Bundle\JsTranslationBundle\DependencyInjection;
 
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Definition\Processor;
@@ -11,13 +11,12 @@ use Symfony\Component\Config\Definition\Processor;
 /**
  * @author William DURAND <william.durand1@gmail.com>
  * @author Hugo Monteiro <hugo.monteiro@gmail.com>
+ *
+ * @final
  */
 class BazingaJsTranslationExtension extends Extension
 {
-    /**
-     * Load configuration.
-     */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $processor     = new Processor();
         $configuration = new Configuration($container->getParameter('kernel.debug'));

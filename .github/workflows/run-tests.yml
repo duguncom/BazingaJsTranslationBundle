@@ -19,31 +19,20 @@ jobs:
         continue-on-error: ${{ matrix.allowed-to-fail }}
 
         strategy:
+            fail-fast: false
             matrix:
-                php-version: ['7.2.5', '7.4', '8.0', '8.1']
-                variant: [normal]
+                php-version: ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
                 dependencies: [highest]
-                allowed-to-fail: [true]
+                allowed-to-fail: [false]
                 symfony-version: [latest]
                 include:
-                  - php-version: '7.4'
+                  - php-version: nightly
                     dependencies: highest
-                    variant: normal
-                    allowed-to-fail: false
-                    symfony-version: latest
-                  - php-version: '8.0'
-                    dependencies: highest
-                    variant: normal
-                    allowed-to-fail: false
-                    symfony-version: latest
-                  - php-version: '8.1'
-                    dependencies: highest
-                    variant: normal
-                    allowed-to-fail: false
+                    allowed-to-fail: true
                     symfony-version: latest
         steps:
             - name: "Checkout code"
-              uses: actions/checkout@v2.3.3
+              uses: actions/checkout@v4.1.7
 
             - name: "Install PHP with extensions"
               uses: shivammathur/setup-php@2.7.0
@@ -53,16 +42,8 @@ jobs:
                   tools: composer:v2
                   extensions: intl, xdebug
 
-            - name: "Set composer cache directory"
-              id: composer-cache
-              run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-            - name: Install variant
-              if: matrix.variant != 'normal'
-              run: composer require ${{ matrix.variant }} --no-update
-
             - name: "Install Composer dependencies (${{ matrix.dependencies }})"
-              uses: "ramsey/composer-install@v1"
+              uses: "ramsey/composer-install@v3"
               with:
                 dependency-versions: "${{ matrix.dependencies }}"
                 composer-options: "--prefer-dist"
@@ -76,8 +57,23 @@ jobs:
             - name: "Run unit tests"
               run: vendor/bin/phpunit --coverage-text --verbose
 
-            - name: "Run phantomjs tests"
-              run: phantomjs Resources/js/run-qunit.js file://`pwd`/Resources/js/index.html
+    test_js:
+        name: JS tests
+        runs-on: ubuntu-latest
 
-            - name: "Run phantomjs tests ES5"
-              run: phantomjs Resources/js/run-qunit.js file://`pwd`/Resources/js/index-with-es5-shim.html
+        steps:
+            - name: "Checkout code"
+              uses: actions/checkout@v4.1.7
+
+            - name: "Setup node"
+              uses: actions/setup-node@v4.0.3
+              with:
+                  node-version: 'lts/*'
+
+            - name: "Install dependencies"
+              run: npm install
+              working-directory: Resources
+
+            - name: "Run tests"
+              run: npm test
+              working-directory: Resources
