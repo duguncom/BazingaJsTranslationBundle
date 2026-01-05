@@ -4,7 +4,7 @@ namespace Bazinga\Bundle\JsTranslationBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Definition\Processor;
 
@@ -22,9 +22,9 @@ class BazingaJsTranslationExtension extends Extension
         $configuration = new Configuration($container->getParameter('kernel.debug'));
         $config = $processor->processConfiguration($configuration, $configs);
 
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.yaml');
-        $loader->load('controllers.yaml');
+        $loader = new PhpFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader->load('services.php');
+        $loader->load('controllers.php');
 
         $container
             ->getDefinition('bazinga.jstranslation.controller')
