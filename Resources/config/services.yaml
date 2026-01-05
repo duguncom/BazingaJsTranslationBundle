@@ -1,0 +1,31 @@
+parameters:
+    bazinga.jstranslation.translation_finder.class: 'Bazinga\Bundle\JsTranslationBundle\Finder\TranslationFinder'
+    bazinga.jstranslation.translation_dumper.class: 'Bazinga\Bundle\JsTranslationBundle\Dumper\TranslationDumper'
+
+services:
+    bazinga.jstranslation.translation_finder:
+        class: '%bazinga.jstranslation.translation_finder.class%'
+        public: true
+        arguments:
+            - []  # all resource files paths from the framework bundle
+
+    bazinga.jstranslation.translation_dumper:
+        class: '%bazinga.jstranslation.translation_dumper.class%'
+        public: true
+        arguments:
+            - '@twig'
+            - '@bazinga.jstranslation.translation_finder'
+            - '@filesystem'
+            - ~  # fallback (locale)
+            - ~  # default domain
+            - ~  # active locales
+            - ~  # active domains
+
+    bazinga.jstranslation.dump_command:
+        class: 'Bazinga\Bundle\JsTranslationBundle\Command\DumpCommand'
+        public: true
+        arguments:
+            - '@bazinga.jstranslation.translation_dumper'
+            - '%kernel.project_dir%'
+        tags:
+            - { name: 'console.command', command: 'bazinga:js-translation:dump' }
