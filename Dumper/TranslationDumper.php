@@ -181,13 +181,7 @@ class TranslationDumper
     {
         foreach ($this->getTranslations() as $locale => $domains) {
             foreach ($domains as $domain => $translations) {
-
                 $cleanedDomain = Util::cleanDomain($domain);
-                if ($domain !== $cleanedDomain && !in_array($cleanedDomain, $domains, true)) {
-                    // e.g.: skip "messages+intl-icu" if "messages" exists. They will get merged after.
-                    continue;
-                }
-
                 $renderContext = array(
                     'translations'   => array($locale => $this->filterTranslationsByDomain($domains, $cleanedDomain)),
                     'include_config' => false,
